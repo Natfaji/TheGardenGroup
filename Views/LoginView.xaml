@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="UI.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UI.Views"
+			 xmlns:CustomControls="clr-namespace:UI.CustomControls"
+			 mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+	<Grid x:Name="LoginScreen1" Background="#FF1B1448">
+		<Rectangle Stroke="Black" StrokeThickness="0">
+			<Rectangle.Fill>
+				<ImageBrush ImageSource="/Assets/IMS BG.jpg" Opacity="0.4"/>
+			</Rectangle.Fill>
+		</Rectangle>
+		<Border Height="350" CornerRadius="8,8,8,8" BorderBrush="Black" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<Border.Effect>
+				<DropShadowEffect BlurRadius="15" ShadowDepth="10"/>
+			</Border.Effect>
+			<Border.Background>
+				<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+					<GradientStop Color="#FFC5F1FC" Offset="0.3"/>
+					<GradientStop Color="White" Offset="0.5"/>
+				</LinearGradientBrush>
+			</Border.Background>
+			<StackPanel>
+				<Image Source="/Assets/IMS.PNG" Margin="0,15,0,0" Height="75"/>
+
+				<Label x:Name="loginLabel" Content="Login" FontSize="32" HorizontalAlignment="Center" Foreground="Black"/>
+
+				<StackPanel>
+					<Label x:Name="emailInputLabel" Content="Email" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" Margin="25,0,0,0"/>
+					<TextBox x:Name="emailInput" Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="25,0,25,0"/>
+
+					<Label Content="Password" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Margin="25,5,0,0" Foreground="Black"/>
+					<CustomControls:BindablePasswordBox VerticalAlignment="Center" Grid.Row="1" Margin="25,0,25,0" Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+					<Button Content="Forgot password?" Command="{Binding ResetPasswordCommand}" Width="120" HorizontalAlignment="Right" Margin="0,5,0,0" BorderBrush="{x:Null}" Background="{x:Null}"/>
+
+					<Button x:Name="loginButton" Command="{Binding LoginCommand}" Content="Login" HorizontalAlignment="Center" VerticalAlignment="Center" Width="120" Grid.Row="2" Margin="0,15,0,0"/>
+				</StackPanel>
+				<TextBlock x:Name="errorLabel" Text="{Binding ErrorMessage}" Foreground="Red" Margin="0,15,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			</StackPanel>
+		</Border>
+	</Grid>
+</UserControl>

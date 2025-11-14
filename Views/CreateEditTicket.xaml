@@ -1,0 +1,179 @@
+﻿<UserControl x:Class="UI.Views.CreateEditTicket"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UI.Views"
+			 xmlns:CustomControls="clr-namespace:UI.CustomControls"
+			 xmlns:ValidationRules="clr-namespace:UI.ValidationRules"
+			 xmlns:models="clr-namespace:Model.Models;assembly=Model"
+             mc:Ignorable="d"
+			 d:DesignHeight="450" d:DesignWidth="800">
+
+	<Grid Background="White">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="5*"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<!-- 0: Gap -->
+			<ColumnDefinition Width="15"/>
+			<!-- 1:  -->
+			<ColumnDefinition Width="2*"/>
+			<!-- 2: Gap -->
+			<ColumnDefinition Width="15"/>
+			<!-- 3:  -->
+			<ColumnDefinition Width="*"/>
+			<!-- 4: Gap -->
+			<ColumnDefinition Width="15"/>
+		</Grid.ColumnDefinitions>
+
+		<Label Content="Create new incident ticket" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Grid.ColumnSpan="5"/>
+
+		<Grid Grid.Row="1" Grid.Column="1">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="4*"/>
+			</Grid.RowDefinitions>
+
+			<StackPanel Grid.Row="0">
+				<Label Content="Title:"/>
+				<TextBox SpellCheck.IsEnabled="True">
+					<TextBox.Text>
+						<Binding Path="Ticket.Title"
+								 UpdateSourceTrigger="PropertyChanged"
+								 ValidatesOnDataErrors="True"
+								 NotifyOnValidationError="True">
+							<Binding.ValidationRules>
+								<ValidationRules:InputRequiredRule />
+							</Binding.ValidationRules>
+						</Binding>
+					</TextBox.Text>
+				</TextBox>
+			</StackPanel>
+
+			<StackPanel Grid.Row="1">
+				<Label Content="Description:"/>
+				<TextBox
+					Text="{Binding Ticket.Description, UpdateSourceTrigger=PropertyChanged}"
+					SpellCheck.IsEnabled="True"
+					TextWrapping="Wrap"
+					AcceptsReturn="True"
+					AcceptsTab="True"
+					VerticalScrollBarVisibility="Auto"
+					MinLines="10"
+					MaxLines="15"/>
+			</StackPanel>
+		</Grid>
+
+
+		<UniformGrid Grid.Row="1" Grid.Column="3" Rows="5" Columns="1">
+			<StackPanel>
+				<StackPanel.Style>
+					<Style TargetType="StackPanel">
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Ticket.Status}" Value="{x:Null}">
+								<Setter Property="Visibility" Value="Collapsed"/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</StackPanel.Style>
+
+				<Label Content="Status:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+				<ComboBox
+					ItemsSource="{Binding StatusList, UpdateSourceTrigger=PropertyChanged}"
+					SelectedItem="{Binding Ticket.Status, Mode=TwoWay}"
+					Width="250"
+					HorizontalAlignment="Left"/>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Assigned to:" Margin="0,0,0,10" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+				<!--<ComboBox
+					ItemsSource="{Binding AssignedToList}"
+					DisplayMemberPath="Name"
+					Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+					IsEditable="True">
+					<ComboBox.SelectedItem>
+						<Binding Path="Ticket.Assigned_to"
+								 UpdateSourceTrigger="PropertyChanged"
+								 ValidatesOnDataErrors="True"
+								 NotifyOnValidationError="True"
+								 Mode="TwoWay">
+							<Binding.ValidationRules>
+								<ValidationRules:NotNullAndTypeRule ExpectedType="{x:Type models:PartialUser}"/>
+							</Binding.ValidationRules>
+						</Binding>
+					</ComboBox.SelectedItem>
+				</ComboBox>-->
+
+				<ItemsControl ItemsSource="{Binding Ticket.Assigned_to}"
+							  Margin="5,0,0,10">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Border Background="#EEE" Padding="4" Margin="2" CornerRadius="4">
+								<TextBlock Text="{Binding Name}" />
+							</Border>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+
+				<!-- Pencil button -->
+				<Button Width="30" Height="30" Margin="4"
+						Command="{Binding EditAssignedToCommand}">
+					<Viewbox Stretch="Uniform">
+						<Path Data="M12 2L2 12l1.5 4.5L8 14l10-10L12 2z"
+							  Fill="Black"/>
+					</Viewbox>
+				</Button>
+
+				<!-- Popup with searchable ComboBox -->
+				<Popup IsOpen="{Binding AssignedToPopupIsOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					   Placement="Bottom"
+					   StaysOpen="False">
+					<Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="4">
+						<ComboBox Width="200"
+								  ItemsSource="{Binding AssignedToList, UpdateSourceTrigger=PropertyChanged}"
+								  IsEditable="True"
+								  DisplayMemberPath="Name"
+								  IsTextSearchEnabled="False"
+								  IsDropDownOpen="{Binding IsDropDownOpen, Mode=TwoWay}"
+								  StaysOpenOnEdit="True"
+								  Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								  SelectionChanged="ComboBox_SelectionChanged"/>
+					</Border>
+				</Popup>
+			</StackPanel>
+
+			<StackPanel>
+				<Label Content="Priority:"/>
+				<ComboBox
+					ItemsSource="{Binding PriorityList, UpdateSourceTrigger=PropertyChanged}"
+					SelectedItem="{Binding Ticket.Priority, Mode=TwoWay}" />
+			</StackPanel>
+
+			<StackPanel>
+				<Label Content="Date of occurrence:"/>
+				<DatePicker>
+					<DatePicker.SelectedDate>
+						<Binding Path="Ticket.Occured_on"
+								 UpdateSourceTrigger="PropertyChanged"
+								 ValidatesOnDataErrors="True"
+								 NotifyOnValidationError="True">
+							<Binding.ValidationRules>
+								<ValidationRules:DateNotInFutureRule />
+							</Binding.ValidationRules>
+						</Binding>
+					</DatePicker.SelectedDate>
+				</DatePicker>
+
+			</StackPanel>
+		</UniformGrid>
+
+		<StackPanel Grid.Column="3" Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="15" >
+			<Button Content="Cancel" Command="{Binding CancelCommand}" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="20,7,20,7" ScrollViewer.CanContentScroll="True" Grid.IsSharedSizeScope="True"/>
+			<Button Content="Save" Command="{Binding SaveTicketCommand}" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#FF0090FF" Foreground="White" Margin="15,0,0,0" Padding="20,7,20,7" Grid.IsSharedSizeScope="True"/>
+		</StackPanel>
+	</Grid>
+</UserControl>
